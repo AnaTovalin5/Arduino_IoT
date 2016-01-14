@@ -34,15 +34,15 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
                                          SPI_CLOCK_DIV2); // you can change this clock speed
 
 //Wifi Network credentials
-#define WLAN_SSID       "PUSD_Guest"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "A+Student"        // Network password
+#define WLAN_SSID       "ArduinoNet"           // Network name, cannot be longer than 32 characters!
+#define WLAN_PASS       "ArduinoNet01"        // Network password
 
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
 // What page to grab!
 
-  #define WEBSITE      "pefarduino2.meteor.com" //domain the Arduino will access
+  #define WEBSITE      "anaiot.meteor.com" //domain the Arduino will access
   #define WEBPAGE      "/api/getDat"        // API Get page
 
 
