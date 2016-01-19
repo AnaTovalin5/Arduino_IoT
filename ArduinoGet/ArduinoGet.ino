@@ -34,8 +34,8 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
                                          SPI_CLOCK_DIV2); // you can change this clock speed
 
 //Wifi Network credentials
-#define WLAN_SSID       "ArduinoNet"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "ArduinoNet01"        // Network password
+#define WLAN_SSID       "ArduinoPop"           // Network name, cannot be longer than 32 characters!
+#define WLAN_PASS       "QuietJustin"        // Network password
 
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
@@ -71,6 +71,7 @@ void setup(void)
   Serial.println(getFreeRam(), DEC);
   
   //Setting output pins, to be controlled via Wifi
+  pinMode(8, OUTPUT);
   pinMode(7, OUTPUT);
   pinMode(6, OUTPUT);
   
@@ -237,16 +238,19 @@ void valueSet()
 
 
           //Now we decide what to do with our data
-           if(getVar>500)
-                   { 
-                     digitalWrite(7,HIGH);
-                     digitalWrite(6,LOW);
-                   }
-                   else
-                   {
-                     digitalWrite(7,LOW);
-                     digitalWrite(6,HIGH);
-                   }
+          if (getVar < 500) { 
+            digitalWrite(8,LOW);
+            digitalWrite(7,LOW);
+            digitalWrite(6,HIGH);
+          } else if (getVar > 500 && getVar < 1000) {
+             digitalWrite(8,LOW);
+             digitalWrite(7,HIGH);
+             digitalWrite(6,LOW);
+          } else if (getVar > 1000) {
+             digitalWrite(8,HIGH);
+             digitalWrite(7,LOW);
+             digitalWrite(6,LOW);
+          }
                    
                    
      /* The arduReset function is a last resort.

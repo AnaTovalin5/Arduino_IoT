@@ -48,6 +48,11 @@ if (Meteor.isClient) {
 				val2 = 10;  // Value given to data if Button 2 is pressed
 				DataID = DataColl.findOne()._id;
 				DataColl.update(DataID ,{$set: {value: val2} });
+			},
+           'click .value3': function(){ //Button 2
+				val3 = 15;  // Value given to data if Button 3 is pressed
+				DataID = DataColl.findOne()._id;
+				DataColl.update(DataID ,{$set: {value: val3} });
 			}
 	  
 		});
