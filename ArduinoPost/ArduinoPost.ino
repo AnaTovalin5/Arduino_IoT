@@ -10,6 +10,15 @@
 #include <string.h>
 #include "utility/debug.h"
 
+//code required for LCD display 
+#include <LiquidCrystal.h> 
+LiquidCrystal lcd(2,4,6,7,8,9);
+
+int switchState = 0;
+const int switchPin = A0; 
+int reply;
+int randNum = 0;
+
 /******************************************************************************
 
 The following Digital Pins are used by the Wifi shield and should be considered unavailable for *any* other purpose:
@@ -34,14 +43,14 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
                                          SPI_CLOCK_DIV2); // you can change this clock speed
 
 //Wifi Network credentials
-#define WLAN_SSID       "H4HQP"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "54C8E356"        // Network password
+#define WLAN_SSID       "Arduino24"           // Network name, cannot be longer than 32 characters!
+#define WLAN_PASS       "nonononono"        // Network password
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
 // What page to grab!
 
-  #define WEBSITE      "pefarduino2.meteor.com" //domain the Arduino will access
+  #define WEBSITE      "anaiot.meteor.com" //domain the Arduino will access
   #define WEBPAGE      "/api/postDat/"        // API Get page
 
 
@@ -66,8 +75,11 @@ void setup(void)
   Serial.print("Free RAM: ");
   Serial.println(getFreeRam(), DEC);
   
-   
-  
+  pinMode(switchPin, INPUT);
+  lcd.clear(); lcd.setCursor(0, 0); 
+  lcd.print("Number: "); 
+  lcd.setCursor(0,1 );
+  delay(5000);
  /* Initialise the module */
   connectToSite();
   
@@ -78,14 +90,11 @@ void setup(void)
 
 
 //--------------------------------------------------------
-void loop(void)
-{
-
- if( millis()-lastTime > checkupTime)
- {
+void loop(void) { 
+  if( millis()-lastTime > checkupTime) {
     Serial.println("Main Loop:");
     valueSet();
- }
+  }
  
 }
 //----------------------------------------------------------
@@ -150,6 +159,7 @@ void connectToSite()
 
 void valueSet()
 {
+   
   Serial.println("");
     Serial.println("New Value!");
   long t = millis();
@@ -168,7 +178,7 @@ void valueSet()
    *   We must first turn our data into a string, then turn that string into a number;
    *   If you need more characters, you can change the 20 to something else
    */
-  postData=26;
+  postData= randNum;
   postStr = String(postData);
   int numChar = 20;
   char postChar[ numChar ] ;
@@ -176,6 +186,17 @@ void valueSet()
    
     Serial.println("While Loop:");
     while(true){
+            switchState = digitalRead(A0);
+    
+            if (switchState == HIGH) {
+              randNum = random(100);
+              lcd.clear(); 
+              lcd.setCursor(0,0);
+              lcd.print(randNum);
+              Serial.println("Button pushed");
+              delay(250);
+            }
+      
             if (www.connected()) {
             Serial.println("Entering Commands");
             www.fastrprint(F("POST "));
@@ -207,6 +228,9 @@ void valueSet()
            // Serial.println(F("Connection failed"));    
             return;
           }
+
+          
+          
           Serial.println(F("\n----------------------+---------------"));
           
 
