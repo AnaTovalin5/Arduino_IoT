@@ -27,8 +27,7 @@ if (Meteor.isServer) {
 
 //Template Helpers
 if (Meteor.isClient) {
-	 	   
-	   
+    
 	   Template.inputData.events({
 			'submit form': function(event){ //Form submission
 			  event.preventDefault();
@@ -36,8 +35,16 @@ if (Meteor.isClient) {
 			  var valForm = event.target.inputDataVal.value;
 			  //Find the ID value of the item in the collection, then overwrite 
 			  // its value with the new value
-			  DataID = DataColl.findOne()._id;
-			  DataColl.update(DataID ,{$set: {value: valForm} });
+              var countDown = setAlarm(valForm);
+              var stringVal = valForm.toString();
+              var value = countDown.toString();
+              var moises = valForm + value;
+              console.log(countDown);   
+              console.log(value); 
+              console.log(moises);
+              var stringTotal = parseInt(moises);
+			  DataID = DataColl.findOne()._id; 
+			  DataColl.update(DataID ,{$set: {value: stringTotal} });
 			},
 			'click .value1': function(){ //Button 1
 				val1 = 5; // Value given to data if Button 1 is pressed
@@ -45,7 +52,7 @@ if (Meteor.isClient) {
 				DataColl.update(DataID ,{$set: {value: val1} });
 			},
 			'click .value2': function(){ //Button 2
-				val2 = 10;  // Value given to data if Button 2 is pressed
+				val2 = 10;  // Value given to data if Button 2 is pressed 
 				DataID = DataColl.findOne()._id;
 				DataColl.update(DataID ,{$set: {value: val2} });
 			},
@@ -65,6 +72,20 @@ if (Meteor.isClient) {
 				return valRead ;
 			}
 		});  
+    
+        function setAlarm(valForm) {
+              var d = new Date(); // current time
+              var fh = d.getHours() * 100; 
+              var fm = d.getMinutes(); 
+              var ftotal = fh + fm;
+              console.log(fh);
+              console.log(fm);
+              console.log(ftotal);
+
+              var cd = Math.abs(ftotal - valForm);
+
+              return cd;
+          }
    }
    
  //If the URL is root, displays the input form
@@ -145,8 +166,6 @@ if (Meteor.isServer) {
                     console.log("Message empty...");
                     return {status: "fail", message: "Post not found"};
                 }
-
-
                 return;
             }
         }

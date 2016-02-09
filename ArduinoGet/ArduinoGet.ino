@@ -10,6 +10,10 @@
 #include <string.h>
 #include "utility/debug.h"
 
+//code required for LCD display 
+#include <LiquidCrystal.h> 
+LiquidCrystal lcd(2,4,6,7,8,9);
+
 /******************************************************************************
 
 The following Digital Pins are used by the Wifi shield and should be considered unavailable for *any* other purpose:
@@ -34,8 +38,8 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
                                          SPI_CLOCK_DIV2); // you can change this clock speed
 
 //Wifi Network credentials
-#define WLAN_SSID       "ArduinoPop"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "QuietJustin"        // Network password
+#define WLAN_SSID       "Arduino24"           // Network name, cannot be longer than 32 characters!
+#define WLAN_PASS       "NoStringsOnMe"        // Network password
 
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
@@ -69,14 +73,9 @@ void setup(void)
   Serial.println(F("Hello, CC3000!\n")); 
   Serial.print("Free RAM: ");
   Serial.println(getFreeRam(), DEC);
-  
-  //Setting output pins, to be controlled via Wifi
-  pinMode(8, OUTPUT);
-  pinMode(7, OUTPUT);
-  pinMode(6, OUTPUT);
-  
-  
-  
+  pinMode(A0,OUTPUT);  
+  lcd.begin(16, 2); 
+  lcd.print("Alarm Clock");
   
  /* Initialise the module */
   connectToSite();
@@ -171,7 +170,6 @@ void valueSet()
   long t = millis();
   long t_elapsed = 0;
 
-     
   // do loop not in Adafruit
    do {    www = cc3000.connectTCP(ip, 80);
           t_elapsed = millis()-t; 
@@ -238,20 +236,36 @@ void valueSet()
 
 
           //Now we decide what to do with our data
-          if (getVar < 500) { 
-            digitalWrite(8,LOW);
-            digitalWrite(7,LOW);
-            digitalWrite(6,HIGH);
-          } else if (getVar > 500 && getVar < 1000) {
-             digitalWrite(8,LOW);
-             digitalWrite(7,HIGH);
-             digitalWrite(6,LOW);
-          } else if (getVar > 1000) {
-             digitalWrite(8,HIGH);
-             digitalWrite(7,LOW);
-             digitalWrite(6,LOW);
-          }
-                   
+          String svar = String(getVar);
+          String alarm = svar.substring(0, 4);
+          String countDown = svar.substring(4);
+          int cd = 2;//countDown.toInt();
+          Serial.println(svar);
+          Serial.println(cd);
+                        Serial.println("counting");
+
+           int   nowTime = alarm.toInt() - countDown.toInt();
+            while( nowTime < alarm.toInt()  )  {
+             
+              lcd.clear();
+              lcd.setCursor(0,0);
+              lcd.print("Time:  ");
+             
+              lcd.print(nowTime);
+              lcd.setCursor(0,1);
+              lcd.print("Alarm: ");
+              lcd.print(alarm);
+              delay(60000);
+              nowTime+=1;
+            }
+              lcd.clear();
+              lcd.setCursor(0,0);
+              lcd.print("Time:  ");
+              lcd.print(nowTime);
+              lcd.setCursor(0,1);
+              lcd.print("Alarm: ");
+              lcd.print(alarm);
+            tone(A0, 330, 2000);
                    
      /* The arduReset function is a last resort.
       * When your sketch simply will not loop correctly with the wifi connection, use this to automatically
