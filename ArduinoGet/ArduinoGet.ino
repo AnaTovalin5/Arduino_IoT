@@ -14,6 +14,10 @@
 #include <LiquidCrystal.h> 
 LiquidCrystal lcd(2,4,6,7,8,9);
 
+#define RED A0
+#define GREEN A2
+#define BLUE A1
+
 /******************************************************************************
 
 The following Digital Pins are used by the Wifi shield and should be considered unavailable for *any* other purpose:
@@ -39,14 +43,14 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
 
 //Wifi Network credentials
 #define WLAN_SSID       "Arduino24"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "NoStringsOnMe"        // Network password
+#define WLAN_PASS       "KlaatuBaradaNikto"        // Network password
 
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
 // What page to grab!
 
-  #define WEBSITE      "anaiot.meteor.com" //domain the Arduino will access
+  #define WEBSITE      "anaiot3.meteor.com" //domain the Arduino will access
   #define WEBPAGE      "/api/getDat"        // API Get page
 
 
@@ -73,9 +77,17 @@ void setup(void)
   Serial.println(F("Hello, CC3000!\n")); 
   Serial.print("Free RAM: ");
   Serial.println(getFreeRam(), DEC);
-  pinMode(A0,OUTPUT);  
+
+  //rgb led setup
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+  pinMode(RED, OUTPUT);
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(BLUE, HIGH);
+  digitalWrite(RED, HIGH);  
+
   lcd.begin(16, 2); 
-  lcd.print("Alarm Clock");
+  lcd.print("RGB LED");
   
  /* Initialise the module */
   connectToSite();
@@ -221,7 +233,7 @@ void valueSet()
          
           Serial.println("Final Reading:");
           Serial.println(currentLine);
-          getVar = currentLine.toInt(); // The last line of output will be the data we want to download.
+          //getVar = currentLine; // The last line of output will be the data we want to download.
 
           Serial.print(cycles); //Number of times the loop has run
           Serial.println(" Cycles");
@@ -236,37 +248,34 @@ void valueSet()
 
 
           //Now we decide what to do with our data
-          String svar = String(getVar);
-          String alarm = svar.substring(0, 4);
-          String countDown = svar.substring(4);
-          int cd = 2;//countDown.toInt();
-          Serial.println(svar);
-          Serial.println(cd);
-                        Serial.println("counting");
+          Serial.print(currentLine);
+          lcd.print(currentLine);
+          String sVar = currentLine; Serial.println("rgbVal: " + currentLine); 
+          int rgbVal = currentLine.toInt();
+          String redVal = currentLine.substring(0, 3); Serial.println("redval: " + redVal);
+          int redValI = redVal.toInt();
+          String greenVal = currentLine.substring(3, 6); Serial.println("greenval: " + greenVal);
+          int greenValI = greenVal.toInt();
+          String blueVal = currentLine.substring(6); Serial.println("blueval: " + blueVal);
+          int blueValI = blueVal.toInt();
 
-           int   nowTime = alarm.toInt() - countDown.toInt();
-            while( nowTime < alarm.toInt()  )  {
-             
-              lcd.clear();
-              lcd.setCursor(0,0);
-              lcd.print("Time:  ");
-             
-              lcd.print(nowTime);
-              lcd.setCursor(0,1);
-              lcd.print("Alarm: ");
-              lcd.print(alarm);
-              delay(60000);
-              nowTime+=1;
-            }
-              lcd.clear();
-              lcd.setCursor(0,0);
-              lcd.print("Time:  ");
-              lcd.print(nowTime);
-              lcd.setCursor(0,1);
-              lcd.print("Alarm: ");
-              lcd.print(alarm);
-            tone(A0, 330, 2000);
-                   
+          analogWrite(RED,redValI);
+          analogWrite(GREEN,greenValI);
+          analogWrite(BLUE,blueValI);
+          lcd.clear();
+          lcd.setCursor(0,0);
+          lcd.print("Rgb Val:");
+          lcd.print(sVar);
+         
+          lcd.setCursor(0,1);
+          lcd.print("R:");
+          lcd.print(redValI);
+          lcd.print(" G:");
+          lcd.print(greenValI);
+          lcd.print(" B:");
+          lcd.print(blueValI);
+          delay(900);
+                  
      /* The arduReset function is a last resort.
       * When your sketch simply will not loop correctly with the wifi connection, use this to automatically
       * reset the Arduino after each pull.

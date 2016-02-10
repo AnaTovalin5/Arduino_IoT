@@ -6,16 +6,23 @@
 
 <template name= "inputData" >
    <form>
-		<input type="text" name="inputDataVal">
+		<input type="text" name="redVal">
+        <input type="text" name="greenVal">
+        <input type="text" name="blueVal">
 		<input type="submit" value="Input Data">
+       
+        <p>Color: </p>
+       <body style="background-color:rgb({{redValue}},{{greenValue}},{{blueValue}});width:300px;height:300px;"></body>
 </form>
 <p></p>
 <p></P>
+<!--
    <li>
 	    	<input type="button" class="value1" value="Input Value 1">
 	    	<input type="button" class="value2" value="Input Value 2">
             <input type="button" class="value3" value="Input Value 3">
     	</li>
+-->
 </template>
 
 
@@ -28,40 +35,4 @@
        {{lastVal}}
       </p>
     </body>
-</template>
-
-<template name="fullBright">
-
-  <p>
-   {{lastVal}}
-  </p>
-
-
-</template>
-
-<template name="halfBright">
-
-  <p>
-   {{lastVal}}
-  </p>
-
-
-</template>
-
-<template name="halfDark">
-
-  <p>
-   {{lastVal}}
-  </p>
-
-
-</template>
-
-<template name="fullDark">
-
-  <p>
-   {{lastVal}}
-  </p>
-
-
 </template>

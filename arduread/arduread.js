@@ -38,19 +38,18 @@ if (Meteor.isClient) {
 			'submit form': function(event){ //Form submission
 			  event.preventDefault();
 			  //the value submitted in the form
-			  var valForm = event.target.inputDataVal.value;
+			  var redValForm = event.target.redVal.value;
+              var greenValForm = event.target.greenVal.value;
+              var blueValForm = event.target.blueVal.value;
 			  //Find the ID value of the item in the collection, then overwrite 
 			  // its value with the new value
-              var countDown = setAlarm(valForm);
-              var stringVal = valForm.toString();
-              var value = countDown.toString();
-              var moises = valForm + value;
-              console.log(countDown);   
-              console.log(value); 
-              console.log(moises);
-              var stringTotal = parseInt(moises);
+              console.log("Red: " + redValForm);   
+              console.log("Green: " + greenValForm); 
+              console.log("Blue: " + blueValForm);
+              var rgbVal = combineForm(redValForm, greenValForm, blueValForm);
+              console.log("rgbVal: " + rgbVal);
 			  DataID = DataColl.findOne()._id; 
-			  DataColl.update(DataID ,{$set: {value: stringTotal} });
+			  DataColl.update(DataID ,{$set: {value: rgbVal} });
 			},
 			'click .value1': function(){ //Button 1
 				val1 = 5; // Value given to data if Button 1 is pressed
@@ -69,6 +68,30 @@ if (Meteor.isClient) {
 			}
 	  
 		});
+    
+        Template.inputData.helpers({
+            'redValue' : function () {
+                valRead = DataColl.findOne({},{sort: {timestamp: -1}}  ).value;
+                //valRead = "120130140";
+                var color = unconstruct(valRead,0,3);
+                console.log("RedVal: " + color);
+				return color;
+            },
+            'greenValue' : function () {
+                valRead = DataColl.findOne({},{sort: {timestamp: -1}}  ).value;
+                //valRead = "120130140";
+                var color = unconstruct(valRead,3,3); //<-I don't know why the unconstruct function won't parse correctly for only greenValue
+                console.log("GreenVal: " + color);
+				return color;
+            },
+            'blueValue' : function () {
+                valRead = DataColl.findOne({},{sort: {timestamp: -1}}  ).value;
+                //valRead = "120130140";
+                var color = unconstruct(valRead,6,7);
+                console.log("BlueVal: " + color);
+				return color;
+            }
+        });
 	    
 		//Data display template helper functions
 		Template.dataTemp.helpers({
@@ -106,14 +129,24 @@ if (Meteor.isClient) {
 			},
 		});  
     
-        function unconstruct(valRead) {
-            console.log("Entered unconstruct");
+        function combineForm(redValForm, greenValForm, blueValForm) {
+            console.log("Entered combine form function");
+            var redVal = redValForm.toString();
+            var greenVal = greenValForm.toString();
+            var blueVal = blueValForm.toString();
+            
+            var rgbFinal = redVal + greenVal + blueVal;
+            rgbFinal = parseInt(rgbFinal);
+            
+            return rgbFinal;
+        }
+    
+        function unconstruct(valRead,start,end) {
+            console.log("Entered unconstruct function");
             var stringVal = valRead.toString();
-            console.log(stringVal);
-            var temp = stringVal.substr(0,2);
-            var lightVal = stringVal.substr(2);
-            console.log("Temp: " + temp);
-            console.log("lightVal: " + lightVal);
+            var temp = stringVal.substr(start,end);
+            temp = parseInt(temp);
+            
             return temp;
         }
    }
