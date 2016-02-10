@@ -25,6 +25,12 @@ if (Meteor.isServer) {
 }
 
 
+//Session.set('fullDark', "");
+//Session.set('halfDark', "");
+//Session.set('halfLight', "");
+//Session.set('fullBright', "");
+
+
 //Template Helpers
 if (Meteor.isClient) {
     
@@ -69,23 +75,47 @@ if (Meteor.isClient) {
 			// Find the latest (and only, if code is unmodified) value in the collection and returns it
 			'lastVal' : function () {
 				valRead = DataColl.findOne({},{sort: {timestamp: -1}}  ).value;
-				return valRead ;
-			}
+                var temp = unconstruct(valRead);
+                console.log("valRead: " + valRead);
+				return temp;
+			},
+            'templateChanger' : function () {
+				valRead = DataColl.findOne({},{sort: {timestamp: -1}}  ).value;
+                var parse = valRead.toString();
+                var lightVal = parse.substr(2);
+                var opacity = 0;
+                console.log("Entered template changer");
+                if (lightVal <= 25) {
+                    //template full dark
+                    opacity = 1;
+                    console.log("fullDark");
+                } else if (lightVal > 25 && lightVal <= 50) {
+                    //half dark
+                    opacity = .75;
+                    console.log("halfDark");
+                } else if (lightVal > 50 && lightVal <= 100) {
+                    //half bright
+                    opacity = .5;
+                    console.log("halfLight");
+                } else if (lightVal > 100) {
+                    //template full bright
+                    opacity = .25;
+                    console.log("fullBright");
+                }
+				return opacity;
+			},
 		});  
     
-        function setAlarm(valForm) {
-              var d = new Date(); // current time
-              var fh = d.getHours() * 100; 
-              var fm = d.getMinutes(); 
-              var ftotal = fh + fm;
-              console.log(fh);
-              console.log(fm);
-              console.log(ftotal);
-
-              var cd = Math.abs(ftotal - valForm);
-
-              return cd;
-          }
+        function unconstruct(valRead) {
+            console.log("Entered unconstruct");
+            var stringVal = valRead.toString();
+            console.log(stringVal);
+            var temp = stringVal.substr(0,2);
+            var lightVal = stringVal.substr(2);
+            console.log("Temp: " + temp);
+            console.log("lightVal: " + lightVal);
+            return temp;
+        }
    }
    
  //If the URL is root, displays the input form
@@ -102,9 +132,6 @@ Router.route('/data', function () {
 
 
 	});
-
-
-	
 	
 
 // API commands

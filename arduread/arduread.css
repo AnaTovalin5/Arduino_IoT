@@ -1,1 +1,20 @@
 /* CSS declarations go here */
+.fullBright {
+    background-color:rgb(0,0,0);
+    opacity:0.0;
+}
+
+.halfbright {
+    background-color:rgb(0,0,0);
+    opacity:0.25;
+}
+
+.halfDark {
+    background-color:rgb(0,0,0);
+    opacity:0.5;
+}
+
+.fullDark {
+    background-color:rgb(0,0,0);
+    opacity:1.0;
+}

@@ -15,8 +15,10 @@
 LiquidCrystal lcd(2,4,6,7,8,9);
 
 const int sensorPin = A0; 
+const int lightPin = A1;
 const float baselineTemp = 0.0;
 float temperature = 0;
+int allVal = 0;
 
 /******************************************************************************
 
@@ -43,7 +45,7 @@ Tinysine_CC3000 cc3000 = Tinysine_CC3000(Tinysine_CC3000_CS, Tinysine_CC3000_IRQ
 
 //Wifi Network credentials
 #define WLAN_SSID       "Arduino24"           // Network name, cannot be longer than 32 characters!
-#define WLAN_PASS       "FMinus4U"        // Network password
+#define WLAN_PASS       "URTerminated"        // Network password
 // Security can be WLAN_SEC_UNSEC, WLAN_SEC_WEP, WLAN_SEC_WPA or WLAN_SEC_WPA2
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
@@ -75,7 +77,9 @@ void setup(void)
   Serial.println(getFreeRam(), DEC);
 
   lcd.begin(16, 2); 
-  lcd.print("Temp: ");
+  lcd.print("Weather App");
+
+  pinMode(lightPin,INPUT);
   
  /* Initialise the module */
   connectToSite();
@@ -175,7 +179,7 @@ void valueSet()
    *   We must first turn our data into a string, then turn that string into a number;
    *   If you need more characters, you can change the 20 to something else
    */
-  postData= temperature;
+  postData= allVal;
   postStr = String(postData);
   int numChar = 20;
   char postChar[ numChar ] ;
@@ -184,6 +188,7 @@ void valueSet()
     Serial.println("While Loop:");
     while(true){
             int sensorVal = analogRead(sensorPin);
+            int lightVal = analogRead(lightPin);
             Serial.print("Sensor Value: ");
             Serial.print(sensorVal);
 
@@ -197,17 +202,18 @@ void valueSet()
             Serial.print(", degrees C; ");
             Serial.println(temperature);
 
-            if (temperature > baselineTemp) {
-              lcd.clear();
-              lcd.setCursor(0,0);
-              lcd.print(temperature);
-              delay(250);
-            } else {
-              lcd.clear(); 
-              lcd.setCursor(0,0);
-              lcd.print("Sensing Temperature");
-              delay(250);
-            }
+            //Manipulating the numbers
+            temperature = temperature * 100;
+            allVal = temperature + lightVal;
+            Serial.print("All Value: ");
+            Serial.println(allVal);
+            allVal = allVal.toInt();
+            
+            lcd.clear();
+            lcd.setCursor(0,1);
+            lcd.print("All: ");
+            lcd.print(allVal);
+            delay(250);
             
             if (www.connected()) {
             Serial.println("Entering Commands");
